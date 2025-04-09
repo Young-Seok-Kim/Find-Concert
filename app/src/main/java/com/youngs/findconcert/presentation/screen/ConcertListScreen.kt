@@ -1,5 +1,6 @@
 package com.youngs.findconcert.presentation.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,18 +9,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.lifecycleScope
 import com.youngs.findconcert.domain.model.Concert
 import com.youngs.findconcert.presentation.component.ConcertItem
+import com.youngs.findconcert.presentation.viewmodel.ConcertViewModel
+import com.youngs.findconcert.presentation.viewmodel.InterparkViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ConcertListScreen(
-    concerts: List<Concert> = emptyList(), // State hoisting 및 기본값 설정
-    isLoading: Boolean = false,
-    error: String? = null
+    viewModel: InterparkViewModel = hiltViewModel()
 ) {
+    val concerts = viewModel.concerts.collectAsState().value
+    val isLoading = viewModel.isLoading.collectAsState().value
+    val error = viewModel.error.collectAsState().value
+
     Box(modifier = Modifier.fillMaxSize()) {
         when {
             isLoading -> LoadingIndicator() // 실제 로딩 인디케이터로 대체
@@ -58,20 +67,10 @@ private val sampleConcerts = listOf(
     // 추가 샘플 데이터...
 )
 
-@Preview(showBackground = true)
-@Composable
-fun ConcertListScreenPreview() {
-    ConcertListScreen(concerts = sampleConcerts)
-}
 
-@Preview(showBackground = true)
+
+//@Preview(showBackground = true)
 @Composable
 fun ConcertListScreenLoadingPreview() {
-    ConcertListScreen(isLoading = true)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ConcertListScreenErrorPreview() {
-    ConcertListScreen(error = "Failed to load concerts")
+    ConcertListScreen()
 }

@@ -1,10 +1,10 @@
-package com.youngs.findconcert
+package com.youngs.findconcert.presentation.crawler
 
 import android.util.Log
 import com.youngs.findconcert.domain.model.Concert
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 
 class InterparkCrawler {
 
@@ -21,7 +21,6 @@ class InterparkCrawler {
 
             // 콘서트 목록을 감싸는 div 태그 선택
             val concertList = doc.select("div.ProductList_contents__eUxgq")
-//            Log.d("인터파크 concertList",concertList.toString())
 
             // 각 콘서트 정보를 담고 있는 a 태그 선택
             val items = concertList.select("a.TicketItem_ticketItem__")

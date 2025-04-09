@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
+import com.youngs.findconcert.presentation.crawler.InterparkCrawler
 import com.youngs.findconcert.presentation.screen.ConcertListScreen
 import com.youngs.findconcert.presentation.viewmodel.InterparkViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,9 +25,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("메인 액티비티","시작")
-        startCrawling()
-
         setContent {
             ConcertTrackerTheme {
                 Surface(
@@ -39,20 +37,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun startCrawling() {
-        Log.d("startCrawl","ㅈㄱㄴ")
-        lifecycleScope.launch {
-            Log.d("startCrawl","ㅈㄱㄴ2")
-            val result = crawler.crawlConcerts()
-            result.forEach { concert ->
-                Log.d("CrawledData", """  
-                    인터파크
-                    제목: ${concert.title}  
-                    날짜: ${concert.date}  
-                    장소: ${concert.venue}
-                """.trimIndent())
-            }
-        }
-    }
+
 }
 

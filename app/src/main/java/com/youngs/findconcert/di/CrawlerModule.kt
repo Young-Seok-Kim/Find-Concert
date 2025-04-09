@@ -1,6 +1,6 @@
 package com.youngs.findconcert.di
 
-import com.youngs.findconcert.InterparkCrawler
+import com.youngs.findconcert.presentation.crawler.InterparkCrawler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
