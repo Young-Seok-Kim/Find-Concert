@@ -1,39 +1,61 @@
 package com.youngs.findconcert.presentation.screen
 
-import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.lifecycleScope
+import com.youngs.findconcert.data.local.ConcertList
 import com.youngs.findconcert.domain.model.Concert
 import com.youngs.findconcert.presentation.component.ConcertItem
-import com.youngs.findconcert.presentation.viewmodel.ConcertViewModel
-import com.youngs.findconcert.presentation.viewmodel.InterparkViewModel
-import kotlinx.coroutines.launch
 
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ConcertListScreen(
-    viewModel: InterparkViewModel = hiltViewModel()
-) {
-    val concerts = viewModel.concerts.collectAsState().value
-    val isLoading = viewModel.isLoading.collectAsState().value
-    val error = viewModel.error.collectAsState().value
+fun ConcertListScreen(concertLists: List<ConcertList>) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp)
+        // 좌우/상하 패딩 유지
+    ) {
+        concertLists.forEach { concertList ->
+            stickyHeader { // stickyHeader 사용
+                Column(
+                    modifier = Modifier.fillMaxWidth().background(Color.White),
+                    verticalArrangement = Arrangement.spacedBy(8.dp) // 타이틀과 Divider 간격 유지
+                ) {
+                    // 리스트 타이틀 (상단 고정)
+                    Text(
+                        text = concertList.title,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .fillMaxWidth(), // 상단 패딩 제거
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Divider()
+                }
+            }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        when {
-            isLoading -> LoadingIndicator() // 실제 로딩 인디케이터로 대체
-            error != null -> Text(text = "Error: $error") // 실제 에러 메시지 컴포넌트로 대체
-            else -> ConcertLazyList(concerts)
+            items(concertList.concerts) { concert ->
+                ConcertItem(concert = concert)
+            }
         }
     }
 }
@@ -51,11 +73,14 @@ private fun ConcertLazyList(concerts: List<Concert>) {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(
+        itemsIndexed(
             items = concerts,
-            key = { concert -> concert.id }
-        ) { concert ->
+            key = { _, concert -> concert.id }
+        ) { index, concert ->
             ConcertItem(concert = concert)
+            if (index < concerts.size - 1) { // 마지막 아이템 뒤에는 Divider를 추가하지 않음
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+            }
         }
     }
 }
@@ -70,7 +95,7 @@ private val sampleConcerts = listOf(
 
 
 //@Preview(showBackground = true)
-@Composable
-fun ConcertListScreenLoadingPreview() {
-    ConcertListScreen()
-}
+//@Composable
+//fun ConcertListScreenLoadingPreview() {
+//    ConcertListScreen()
+//}

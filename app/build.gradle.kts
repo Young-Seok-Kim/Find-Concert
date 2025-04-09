@@ -76,6 +76,8 @@ dependencies {
 
     val roomVersion = "2.6.1"
 
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
     // Room 라이브러리
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")

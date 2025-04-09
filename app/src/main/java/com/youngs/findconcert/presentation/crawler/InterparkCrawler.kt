@@ -56,7 +56,6 @@ class InterparkCrawler {
                 )
 
             }
-            Log.d("인터파크 콘서트", concerts.toString())
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -64,15 +63,4 @@ class InterparkCrawler {
 
         return@withContext concerts
     }
-
-//    private fun parseConcertElement(element: Element): Concert {
-//        return Concert(
-//            id = element.selectFirst("div.id")?.text() ?: "id 없음",
-//            title = element.selectFirst("div.prdTitle")?.text() ?: "제목 없음",
-//            date = element.selectFirst("div.prdDate")?.text() ?: "날짜 정보 없음",
-//            venue = element.selectFirst("div.prdPlace")?.text() ?: "장소 정보 없음",
-//            detailUrl = element.selectFirst("div.ticketUrl")?.text() ?: "ticket 정보 없음",
-//            imageUrl = element.selectFirst("div.imageUrl")?.text() ?: "imageUrl 정보 없음"
-//        )
-//    }
 }

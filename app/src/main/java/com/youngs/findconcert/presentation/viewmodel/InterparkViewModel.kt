@@ -1,11 +1,12 @@
 package com.youngs.findconcert.presentation.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.youngs.findconcert.data.local.ConcertList
 import com.youngs.findconcert.presentation.crawler.InterparkCrawler
 import com.youngs.findconcert.domain.model.Concert
+import com.youngs.findconcert.presentation.crawler.LiveNationCrawler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,9 +15,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InterparkViewModel @Inject constructor(
-    private val crawler: InterparkCrawler
+    private val interparkCrawler: InterparkCrawler,
+    private val liveNationCrawler: LiveNationCrawler
 ) : ViewModel() {
-
+    private val _concertLists = MutableStateFlow<List<ConcertList>>(emptyList())
+    val concertLists: StateFlow<List<ConcertList>> = _concertLists
 
     private val _concerts = MutableStateFlow<List<Concert>>(emptyList())
     val concerts: StateFlow<List<Concert>> = _concerts
@@ -34,18 +37,12 @@ class InterparkViewModel @Inject constructor(
 
     fun loadInterparkCrawler(){
             viewModelScope.launch {
-                val result = crawler.crawlConcerts()
-                _concerts.value = result // 크롤링 결과를 _concerts에 할당
-                result.forEach { concert ->
-                    Log.d("CrawledData", """  
-                    인터파크
-                    제목: ${concert.title}  
-                    날짜: ${concert.date}  
-                    장소: ${concert.venue}
-                    이미지 url: ${concert.imageUrl}
-                    상세 url: ${concert.detailUrl}
-                """.trimIndent())
-                }
+                val interparkList = interparkCrawler.crawlConcerts()
+                val liveNationList = liveNationCrawler.crawlConcerts()
+                _concertLists.value = listOf(
+                    ConcertList("인터파크", interparkList),
+                    ConcertList("Live Nation", liveNationList)
+                )
         }
     }
 }
